@@ -1,0 +1,31 @@
+
+
+
+
+###############################################################################
+Science Cluster
+Job 6010964 for user 'cwolff'
+Finished at: Sun Apr 27 17:44:49 CEST 2025
+
+Job details:
+============
+
+Name                : vit.slurm
+User                : cwolff
+Partition           : csedu
+Nodes               : cn47
+Cores               : 4
+State               : COMPLETED
+Submit              : 2025-04-27T17:16:11
+Start               : 2025-04-27T17:16:12
+End                 : 2025-04-27T17:44:49
+Reserved walltime   : 01:00:00
+Used walltime       : 00:28:37
+Used CPU time       : 01:53:05 (efficiency: 98.79%)
+% User (Computation): 46.97%
+% System (I/O)      : 53.03%
+Mem reserved        : 10G
+Max Mem used        : 1.84G (cn47)
+Max Disk Write      : 0.00  (cn47)
+Max Disk Read       : 10.24K (cn47)
+

@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DOCKER_IMAGE_TAG="luna25-baseline-3d-algorithm-open-development-phase"
+DOCKER_IMAGE_TAG="luna25-medicalnetresnet34-algorithm-open-development-phase"
 
 # Check if an argument is provided
 if [ "$#" -eq 1 ]; then
@@ -13,8 +13,10 @@ fi
 
 DOCKER_NOOP_VOLUME="${DOCKER_IMAGE_TAG}-volume"
 
-INPUT_DIR="${SCRIPT_DIR}/test/input"
-OUTPUT_DIR="${SCRIPT_DIR}/test/output"
+# INPUT_DIR="${SCRIPT_DIR}/test/input"
+# OUTPUT_DIR="${SCRIPT_DIR}/test/output"
+INPUT_DIR="/mnt/f/AIMI/luna25-3DMedicalNet/test/input"
+OUTPUT_DIR="/mnt/f/AIMI/luna25-3DMedicalNet/test/output"
 echo "=+= (Re)build the container"
 source "${SCRIPT_DIR}/do_build.sh" "$DOCKER_IMAGE_TAG"
 

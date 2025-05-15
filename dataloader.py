@@ -252,7 +252,12 @@ class CTCaseDataset(data.Dataset):
             translations = radius if radius > 0 else None
         
 
-        if self.mode == "2D":
+        if self.mode == "2D" or \
+            self.mode =="vit" or \
+            self.mode == "mobilenetv3L" or \
+            self.mode == "convnexttiny" or \
+            self.mode == "convnexttinyv2":
+            # print(self.mode)
             output_shape = (1, self.size_px, self.size_px)
         else:
             output_shape = (self.size_px, self.size_px, self.size_px)
@@ -386,14 +391,18 @@ def extract_patch(
         prefilter=False,
     ) 
 
-    if mode == "2D":
+    if mode == "2D" or \
+        mode =="vit" or \
+        mode == "mobilenetv3L" or \
+        mode == "convnexttiny" or \
+        mode == "convnexttinyv2":
         # replicate the channel dimension
         patch = np.repeat(patch, 3, axis=0)
 
     else:
         patch = np.expand_dims(patch, axis=0)
 
-    return patch
+    return patch #patch.shape == (3, 64, 64)
 
 def get_data_loader(
     data_dir,

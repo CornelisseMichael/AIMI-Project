@@ -7,12 +7,20 @@ import SimpleITK
 import numpy as np
 from scipy.special import logit
 import joblib
+import os
 from processor import MalignancyProcessor
 
 
-INPUT_PATH = Path("/input")
-OUTPUT_PATH = Path("/output")
+INPUT_PATH = Path("/input") # USE THIS FOR DOCKER
+# INPUT_PATH = Path("input")
+# INPUT_PATH = Path("/content/luna25-3DMedicalNet/input")
+
+OUTPUT_PATH = Path("/output") # USE THIS FOR DOCKER
+# OUTPUT_PATH = Path("/content/luna25-3DMedicalNet/output")
+# OUTPUT_PATH = Path("output")
+
 RESOURCE_PATH = Path("/opt/app/resources")
+# RESOURCE_PATH = Path("/opt/app/resources")
 
 def transform(input_image, point):
     """
@@ -206,6 +214,7 @@ def run(mode="2D", model_name="LUNA25-baseline-2D"):
 
 def load_json_file(*, location):
     # Reads a json file
+    print(f"DEBUG: Reading json file (see inference.py) from: {os.getcwd()}")
     with open(location, "r") as f:
         return json.loads(f.read())
 
@@ -250,7 +259,8 @@ def _show_torch_cuda_info():
 
 
 if __name__ == "__main__":
-    mode = "2D"
-    model_name = "LUNA25-baseline-2D-20250225"
+    mode = "MedicalNetResnet34" #"2D"
+    model_name = "LUNA25-3DMedicalNetResnet34-MedicalNetResnet34-20250514-1" #"LUNA25-baseline-2D-20250225"
     raise SystemExit(run(mode= mode,
                          model_name=model_name))
+

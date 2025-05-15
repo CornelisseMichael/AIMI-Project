@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DOCKER_IMAGE_TAG="luna25-baseline-open-development-phase"
+DOCKER_IMAGE_TAG="luna25-medicalnetresnet34-algorithm-open-development-phase"
 
 
 # Check if an argument is provided
