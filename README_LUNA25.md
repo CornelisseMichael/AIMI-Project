@@ -1,3 +1,7 @@
+# ATTENTION
+This is the readme from the official github repo of the LUNA25 challenge. 
+All the following information still holds, therefore, we refer you to this readme in case of any issues unrelated to our additions.
+
 # 📦 LUNA25 Baseline Algorithm
 Thank you for participating in the [LUNA25 Challenge](https://luna25.grand-challenge.org/).
 
