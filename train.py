@@ -10,6 +10,10 @@ from models.SwinTiny import SwinTiny
 from models.SwinBase import SwinBase
 from models.DeitSmall import DeiTSmall
 from models.DeitBase import DeiTBase
+from models.model_mobilenet_v3_large import MobileNetLarge
+from models.model_convnexttiny import ConvNextTiny
+from models.model_convnexttinyv2 import ConvNextTinyV2
+from models.model_medicalnets import MedicalNetModel
 from dataloader import get_data_loader
 import logging
 import numpy as np
@@ -97,20 +101,37 @@ def create_dataloaders(train_df, valid_df):
     )
 
     return train_loader, valid_loader
+    
 def initialize_model():
     if config.MODE == "2D":
         return ResNet50()
     elif config.MODE == "3D":
         return I3D(num_classes=1, input_channels=3, pre_trained=True, freeze_bn=True)
     elif config.MODE == "vit":
-        return timm.create_model(
-            "swin_tiny_patch4_window7_224", pretrained=True, num_classes=1, in_chans=config.IN_CHANS
-        )
+        model = DeiTSmall(pretrained=True).to(device)
+    elif config.MODE == "swintiny":
+        model = SwinTiny(pretrained=True).to(device)
+    elif config.MODE == "mobilenetv3L":
+        model = MobileNetLarge(pretrained=True).to(device)
     elif config.MODE == "convnexttiny":
-        model = ConvNextTiny(pretrained=True)
-        return model
-        
-    elif config.MODE == "ensemble":
+        model = ConvNextTiny(pretrained=True).to(device)
+    elif config.MODE == "convnexttinyv2":
+        model = ConvNextTinyV2(pretrained=True).to(device)
+    elif config.MODE == "MedicalNetResnet10":
+        model = MedicalNetModel(model_depth=10, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_10.pth").to(device)
+    elif config.MODE == "MedicalNetResnet18":
+        model = MedicalNetModel(model_depth=18, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_18.pth").to(device)
+    elif config.MODE == "MedicalNetResnet34":
+        model = MedicalNetModel(model_depth=34, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_34.pth").to(device)
+    elif config.MODE == "MedicalNetResnet50":
+        model = MedicalNetModel(model_depth=50, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_50.pth").to(device)
+    elif config.MODE == "MedicalNetResnet101":
+        model = MedicalNetModel(model_depth=101, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_101.pth").to(device)
+    elif config.MODE == "MedicalNetResnet152":
+        model = MedicalNetModel(model_depth=152, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_152.pth").to(device)
+    elif config.MODE == "MedicalNetResnet200":
+        model = MedicalNetModel(model_depth=200, pretrained=True, pretrained_path = "models/pretrained_resnets/resnet_200.pth").to(device) 
+    elif config.MODE == "ensemble": # Different handling for model ensembles
         if config.MODEL =="swin_tiny":
             base = SwinTiny(pretrained=True, num_classes=1)
         elif config.MODEL =="swin_base":
@@ -124,6 +145,9 @@ def initialize_model():
         return EnsembleWrapper(base, num_images=config.NUM_IMAGES, num_outputs=1)
     else:
         raise ValueError(f"Invalid mode: {config.MODE}")
+
+    return model
+
 def lr_schedule(optimizer):
     def lr_lambda(epoch):
         if epoch < 5:
@@ -297,9 +321,7 @@ def test(train_csv_path, valid_csv_path):
     
     
 if __name__ == "__main__":
-
-
-    experiment_name = f"{config.EXPERIMENT_NAME}"
+    experiment_name = f"{config.EXPERIMENT_NAME}-{config.MODE}-{datetime.today().strftime('%Y%m%d')}-{config.VERSION}"
 
     exp_save_root = config.EXPERIMENT_DIR / experiment_name
     exp_save_root.mkdir(parents=True, exist_ok=True)
