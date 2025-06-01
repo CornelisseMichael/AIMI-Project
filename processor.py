@@ -63,9 +63,9 @@ class MalignancyProcessor:
         elif self.mode == "mobilenetv3L":
             self.model_mobilenet_v3_large = MobileNetLarge(pretrained=False).cuda()
         elif self.mode == "convnexttiny":
-            self.model_mobilenet_v3_large = ConvNextTiny(pretrained=False).cuda()
+            self.model_convnexttiny = ConvNextTiny(pretrained=False).cuda()
         elif self.mode == "convnexttinyv2":
-            self.model_mobilenet_v3_large = ConvNextTinyV2(pretrained=False).cuda()
+            self.model_convnexttinyv2 = ConvNextTinyV2(pretrained=False).cuda()
         elif self.mode == "3D":
             self.model_3d = I3D(num_classes=1, pre_trained=False, input_channels=3).cuda()
         elif self.mode == "MedicalNetResnet10":
