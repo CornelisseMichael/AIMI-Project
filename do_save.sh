@@ -6,7 +6,7 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Set default container name
-DOCKER_IMAGE_TAG="luna25-medicalnetresnet34-algorithm-open-development-phase"
+DOCKER_IMAGE_TAG="luna25-ensemble_3d_deit"
 
 # Check if an argument is provided
 if [ "$#" -eq 1 ]; then
