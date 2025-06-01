@@ -362,10 +362,7 @@ class MedicalNetModel(nn.Module):
         print(f"Loading pretrained weights from {pretrained_path}")
         
         try:
-            # Load the state dict
             pretrained_dict = torch.load(pretrained_path)
-            
-            # Filter out unnecessary keys
             if 'state_dict' in pretrained_dict:
                 pretrained_dict = pretrained_dict['state_dict']
             
@@ -395,7 +392,8 @@ class MedicalNetModel(nn.Module):
                     else:
                         print(f"DEBUG: Shape mismatch for {new_key}: pretrained {v.shape} vs model {model_dict[new_key].shape}")
             
-            # # Identify missing keys # Note, the 18 layers that it does not load from for segmentation (start with conv_seg.)
+            # Identify missing keys
+            # Note, the 18 layers that it does not load are for segmentation (start with conv_seg.)
             # missing_keys = all_model_keys - loaded_keys
             # print(f"DEBUG: Missing keys ({len(missing_keys)}):")
             # for key in missing_keys:
