@@ -259,8 +259,8 @@ def _show_torch_cuda_info():
 
 
 if __name__ == "__main__":
-    mode = "MedicalNetResnet34" #"2D"
-    model_name = "LUNA25-3DMedicalNetResnet34-MedicalNetResnet34-20250514-1" #"LUNA25-baseline-2D-20250225"
+    mode = "ensemble_deit_3d" #"2D"
+    model_name = "-"#"LUNA25-baseline-2D-20250225"
     raise SystemExit(run(mode= mode,
                          model_name=model_name))
 
