@@ -103,6 +103,7 @@ def create_dataloaders(train_df, valid_df):
     return train_loader, valid_loader
     
 def initialize_model():
+    # Add your model here for intialization
     if config.MODE == "2D":
         return ResNet50()
     elif config.MODE == "3D":
@@ -147,6 +148,7 @@ def initialize_model():
         raise ValueError(f"Invalid mode: {config.MODE}")
 
     return model
+
 
 def lr_schedule(optimizer):
     def lr_lambda(epoch):
@@ -223,6 +225,7 @@ def train(train_csv_path, valid_csv_path, exp_save_root):
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE, weight_decay=config.WEIGHT_DECAY)
     scheduler = lr_schedule(optimizer)
 
+    # History for metrics, uncomment evaluation on training dataset if desired
     history = {
         "train_loss": [], # "train_eval_loss": [], "train_auc": [],
         "val_loss": [], "val_auc": [],
@@ -242,19 +245,20 @@ def train(train_csv_path, valid_csv_path, exp_save_root):
         #train one epoch
         train_loss = train_one_epoch(model, train_loader, criterion, optimizer, scheduler, use_sched = config.USE_SCHED)
 
-        # Evaluate on training set
-       # train_eval_loss, train_auc, (TP_train, FP_train, FN_train, TN_train) = evaluate_model(model, train_loader, criterion)
+        # Evaluate on training set, uncomment if desired
+        # train_eval_loss, train_auc, (TP_train, FP_train, FN_train, TN_train) = evaluate_model(model, train_loader, criterion)
         
         # Evaluate on validation set
         val_loss, val_auc, (TP, FP, FN, TN) = evaluate_model(model, valid_loader, criterion)
 
         # Logging
-       # history["train_eval_loss"].append(train_eval_loss)
-       # history["train_auc"].append(train_auc)
-       # history["train_tp"].append(TP_train)
-       # history["train_fp"].append(FP_train)
-       # history["train_fn"].append(FN_train)
-       # history["train_tn"].append(TN_train)
+        # Uncomment if desired
+        # history["train_eval_loss"].append(train_eval_loss)
+        # history["train_auc"].append(train_auc)
+        # history["train_tp"].append(TP_train)
+        # history["train_fp"].append(FP_train)
+        # history["train_fn"].append(FN_train)
+        # history["train_tn"].append(TN_train)
 
         history["train_loss"].append(train_loss)
         history["val_loss"].append(val_loss)
