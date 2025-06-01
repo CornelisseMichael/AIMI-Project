@@ -4,12 +4,17 @@ from pathlib import Path
 class Configuration(object):
     def __init__(self) -> None:
 
+	# Version for starting training with k-fold, here we train fold 3
         self.VERSION = 3
 
         # local directories
         self.WORKDIR = Path("/content/luna25-ensemble2d-adam")
         self.DATADIR = Path("/content/luna25_images")
         self.CSV_DIR = Path("/content/luna25-ensemble2d-adam/data")
+
+    	# self.WORKDIR = Path("C:/Users/chari/m-data-science/ai-medical-imaging/luna25-ensemble")
+     	# self.DATADIR = Path("C:/Users/chari/m-data-science/ai-medical-imaging/data/luna25_nodule_blocks")
+     	# self.CSV_DIR = Path("C:/Users/chari/m-data-science/ai-medical-imaging/data")
         
         
         # cluster directories
@@ -40,11 +45,11 @@ class Configuration(object):
             self.EXPERIMENT_DIR.mkdir(parents=True)
             
         self.EXPERIMENT_NAME = f"LUNA25-deit_small_model_{self.VERSION}"
-        self.MODE = "ensemble" # 2D or 3D
+        self.MODE = "ensemble_deit_3d"
 
 	    # Training parameters
         self.SEED           = 2025
-        self.NUM_WORKERS    = 0 # CHANGE TO 4
+        self.NUM_WORKERS    = 8
         
         # since ViT-base/DeiT expects 224×224 inputs:
         self.SIZE_PX        = 224  
@@ -53,9 +58,8 @@ class Configuration(object):
         
         # rgb
         self.IN_CHANS       = 3  
-        
-        # smaller batch to fit GPU memory
-        self.BATCH_SIZE     = 8 # CHANGE TO 16 
+	    
+        self.BATCH_SIZE     = 32
         
         self.ROTATION       = ((-20, 20), (-20,20),(-20,20))  
         self.TRANSLATION    = True  
@@ -66,10 +70,10 @@ class Configuration(object):
         self.PATCH_SIZE     = [64, 128, 128]
         
         # finetuning LR & regularization for transformers
-        self.LEARNING_RATE  = 3e-5 
-        self.WEIGHT_DECAY   = 1e-3
+        self.LEARNING_RATE  = 1e-6 
+        self.WEIGHT_DECAY   = 1e-3  
 
-        self.NUM_IMAGES = 9 # CHANGE TO 9
+        self.NUM_IMAGES = 9 
 
         self.DEVICE = "cuda"#cuda:0
         self.MODEL = "deit_small"
