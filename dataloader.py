@@ -252,7 +252,7 @@ class CTCaseDataset(data.Dataset):
             radius = 2.5
             translations = radius if radius > 0 else None
         
-
+        # ADD MODEL HERE IF 2D
         if self.mode == "2D" or \
             self.mode =="vit" or \
             self.mode == "mobilenetv3L" or \
@@ -261,11 +261,12 @@ class CTCaseDataset(data.Dataset):
             self.mode =="ensemble":
             # print(self.mode)
             output_shape = (1, self.size_px, self.size_px)
-        else:
+        else: # ELSE 3D INPUT
             output_shape = (self.size_px, self.size_px, self.size_px)
 
         images = []
 
+        # Extract self.num_images 2D images from the nodule
         for _ in range(self.num_images):
     
             translations = None
@@ -401,6 +402,7 @@ def extract_patch(
         prefilter=False,
     ) 
 
+    # ADD MODEL HERE IF 2D
     if mode == "2D" or \
         mode =="vit" or \
         mode == "mobilenetv3L" or \
@@ -410,7 +412,7 @@ def extract_patch(
         # replicate the channel dimension
         patch = np.repeat(patch, 3, axis=0)
 
-    else:
+    else: # ELSE 3D
         patch = np.expand_dims(patch, axis=0)
 
     return patch #patch.shape == (3, 64, 64)
