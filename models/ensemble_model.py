@@ -9,7 +9,7 @@ class EnsembleWrapper(nn.Module):
         num_outputs: output size after the final FC layer
         """
         super().__init__()
-        self.base_model = base_model  # one shared model
+        self.base_model = base_model  # shared weights
         self.num_images = num_images
         self.fc = nn.Linear(self.num_images * num_outputs, num_outputs)  # combine 9 outputs
 
@@ -17,8 +17,9 @@ class EnsembleWrapper(nn.Module):
         """
         x: Tensor of shape (B, 9, C, H, W)
         """
-       # print(x.shape)
+        #print(x.shape)
         B, N, C, H, W = x.shape
+        #print(B,N,C,H,W)
         assert N == self.num_images, f"Input must have {self.num_images} images per sample"
 
         # Flatten into 9 separate inputs to the base model
