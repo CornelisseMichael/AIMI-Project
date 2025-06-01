@@ -225,6 +225,7 @@ class CTCaseDataset(data.Dataset):
         self.size_px = size_px
         self.size_mm = size_mm
         self.mode = mode
+        self.num_images = config.NUM_IMAGES
 
 
     def __getitem__(self, idx):  # caseid, z, y, x, label, radius
@@ -256,45 +257,54 @@ class CTCaseDataset(data.Dataset):
             self.mode =="vit" or \
             self.mode == "mobilenetv3L" or \
             self.mode == "convnexttiny" or \
-            self.mode == "convnexttinyv2":
+            self.mode == "convnexttinyv2" or \
+            self.mode =="ensemble":
             # print(self.mode)
             output_shape = (1, self.size_px, self.size_px)
         else:
             output_shape = (self.size_px, self.size_px, self.size_px)
 
-        patch = extract_patch(
-            CTData=img,
-            coord=tuple(np.array(self.patch_size) // 2),
-            srcVoxelOrigin=origin,
-            srcWorldMatrix=transform,
-            srcVoxelSpacing=spacing,
-            output_shape=output_shape,
-            voxel_spacing=(
-                self.size_mm / self.size_px,
-                self.size_mm / self.size_px,
-                self.size_mm / self.size_px,
-            ),
-            rotations=self.rotations,
-            translations=translations,
-            coord_space_world=False,
-            mode=self.mode,
-        )
+        images = []
 
-        # ensure same datatype...
-        patch = patch.astype(np.float32)
-
-        # clip and scale...
-        patch = clip_and_scale(patch)
-
-        target = torch.ones((1,)) * label
-
-        sample = {
-            "image": torch.from_numpy(patch),
-            "label": target.long(),
+        for _ in range(self.num_images):
+    
+            translations = None
+            if self.translations:
+                radius = 2.5
+                translations = radius if radius > 0 else None
+    
+            patch = extract_patch(
+                CTData=img,
+                coord=tuple(np.array(self.patch_size) // 2),
+                srcVoxelOrigin=origin,
+                srcWorldMatrix=transform,
+                srcVoxelSpacing=spacing,
+                output_shape=output_shape,
+                voxel_spacing=(
+                    self.size_mm / self.size_px,
+                    self.size_mm / self.size_px,
+                    self.size_mm / self.size_px,
+                ),
+                rotations=self.rotations,
+                translations=translations,
+                coord_space_world=False,
+                mode=self.mode,
+            )
+    
+            patch = clip_and_scale(patch.astype(np.float32))
+            images.append(torch.from_numpy(patch))
+   
+        images = torch.stack(images, dim=0)  # shape: (num_images, C, H, W)
+    
+        if self.mode != "ensemble":
+            images = images.squeeze(0)  
+    
+        return {
+            "image": images,
+            "label": torch.tensor([label]).long(),
             "ID": annotation_id,
         }
 
-        return sample
 
     def __len__(self):
         return len(self.dataset)
@@ -395,7 +405,8 @@ def extract_patch(
         mode =="vit" or \
         mode == "mobilenetv3L" or \
         mode == "convnexttiny" or \
-        mode == "convnexttinyv2":
+        mode == "convnexttinyv2" or \
+        mode == "ensemble":
         # replicate the channel dimension
         patch = np.repeat(patch, 3, axis=0)
 
