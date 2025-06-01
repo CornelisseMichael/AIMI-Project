@@ -43,10 +43,13 @@ class MalignancyProcessor:
     """
 
     def __init__(self, mode="ensemble", suppress_logs=False, model_name="LUNA25-baseline-2D"):
+
+        # model folder
         self.model_root = "/opt/app/resources/"
         #self.model_root = "results"
 
-        self.size_px = 224 #64
+        
+        self.size_px = 224 # Change this to reflect the input size
         self.size_mm = 50
 
         self.model_name = model_name
@@ -56,6 +59,7 @@ class MalignancyProcessor:
         if not self.suppress_logs:
             logging.info("Initializing the deep learning system")
 
+        # Add your model initialization here
         if self.mode == "2D":
             self.model_2d = ResNet18(weights=None).cuda()
         elif self.mode == "vit":
@@ -82,7 +86,7 @@ class MalignancyProcessor:
             self.model_medicalnets = MedicalNetModel(model_depth=152, pretrained=False).cuda()
         elif self.mode == "MedicalNetResnet200":
             self.model_medicalnets = MedicalNetModel(model_depth=200, pretrained=False).cuda()
-        elif config.MODE == "ensemble":
+        elif config.MODE == "ensemble": # 2D model Ensemble
             if config.MODEL =="swin_tiny":
                 base = SwinTiny(pretrained=False, num_classes=1)
             elif config.MODEL =="swin_base":
@@ -123,13 +127,12 @@ class MalignancyProcessor:
                     model.load_state_dict(ckpt)
                     model.eval()
                     base_models.append(model)
-                    #self.ensemble_model = EnsembleWrapper(base_models, num_images=config.NUM_IMAGES)
-                self.ensemble_model = Ensemble(base_models).to(DEVICE)#EnsembleWrapper(base, num_images=config.NUM_IMAGES, num_outputs=1)
-        elif config.MODE =="ensemble_deit_3d":
+                self.ensemble_model = Ensemble(base_models).to(DEVICE)
+        elif config.MODE =="ensemble_deit_3d": # ensemble deit and 3d model
             deit_model_name = "LUNA25-deit_small_ensemble-ensemble-20250525-3"
             model_name_3d = "LUNA25-3D-baseline-3D-20250519-1"
 
-            # first the deit model
+            # First the DeiT model
             base = DeiTSmall(num_classes=1, pretrained=False)
             deit_model = EnsembleWrapper(base, num_images=config.NUM_IMAGES, num_outputs=1)
 
@@ -206,9 +209,8 @@ class MalignancyProcessor:
     def remove_prefix_to_state_dict(self, state_dict, prefix="module."):
         new_state_dict = OrderedDict()
         for k, v in state_dict.items():
-            # Remove the prefix from the key if it exists
-            if k.startswith(prefix):  # Check if the key has the prefix
-                k = k[len(prefix):]  # Remove the prefix
+            if k.startswith(prefix):  
+                k = k[len(prefix):]
             new_state_dict[k] = v
         return new_state_dict
 
@@ -218,6 +220,7 @@ class MalignancyProcessor:
         if not self.suppress_logs:
             logging.info("Processing in " + mode)
 
+        # Add your model with the correct output shape here
         if mode == "2D":
             output_shape = [1, self.size_px, self.size_px]
             model = self.model_2d
